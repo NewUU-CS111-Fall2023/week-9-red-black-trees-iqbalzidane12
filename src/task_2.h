@@ -1,8 +1,3 @@
-/*
- * Author:
- * Date:
- * Name: Muxtorov Abdulaziz
- */ 
 #include <iostream>
 
 enum Color { RED, BLACK };
@@ -32,6 +27,10 @@ public:
     void Insert(int key);
     // Time complexity: O(N) where N is the number of nodes in the tree
     void printTree() const;
+    // Time complexity: O(1)
+    void leftRotate();
+    // Time complexity: O(1)
+    void rightRotate();
 };
 
 void RedBlackTree::leftRotate(Node* x) {
@@ -71,7 +70,6 @@ void RedBlackTree::rightRotate(Node* y) {
 }
 
 void RedBlackTree::fixInsert(Node* z) {
-    // Fix the tree after insertion
     while (z != root && z->parent->color == RED) {
         if (z->parent == z->parent->parent->left) {
             Node* y = z->parent->parent->right;
@@ -89,7 +87,9 @@ void RedBlackTree::fixInsert(Node* z) {
                 z->parent->parent->color = RED;
                 rightRotate(z->parent->parent);
             }
-        } else {
+        } 
+        else
+         {
             Node* y = z->parent->parent->left;
             if (y != nullptr && y->color == RED) {
                 z->parent->color = BLACK;
@@ -162,7 +162,21 @@ void RedBlackTree::printTree() const {
     printTree(root, 0);
 }
 
-int task_1() {
+void RedBlackTree::leftRotate() {
+    // Time complexity: O(1)
+    if (root != nullptr && root->right != nullptr) {
+        leftRotate(root);
+    }
+}
+
+void RedBlackTree::rightRotate() {
+    // Time complexity: O(1)
+    if (root != nullptr && root->left != nullptr) {
+        rightRotate(root);
+    }
+}
+
+int task_2 () {
     int N;
     std::cout << "Enter the number of nodes (N): ";
     std::cin >> N;
@@ -177,6 +191,14 @@ int task_1() {
     }
 
     std::cout << "Red-Black Tree:" << std::endl;
+    rbt.printTree();
+
+    std::cout << "Performing left rotation on the root:" << std::endl;
+    rbt.leftRotate();
+    rbt.printTree();
+
+    std::cout << "Performing right rotation on the root:" << std::endl;
+    rbt.rightRotate();
     rbt.printTree();
 
     return 0;

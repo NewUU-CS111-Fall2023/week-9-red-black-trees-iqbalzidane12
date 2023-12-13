@@ -1,12 +1,5 @@
-/*
- * Author:
- * Date:
- * Name: Muxtorov Abdulaziz
- */ 
 #include <iostream>
-
 enum Color { RED, BLACK };
-
 class RedBlackTree {
 private:
     class Node {
@@ -25,16 +18,20 @@ private:
     void rightRotate(Node* x);
     void fixInsert(Node* x);
     void printTree(Node* root, int space) const;
-
-public:
+    void reverseInorderPrint(Node* root) const;  // Added for reversing the tree
+    public:
     RedBlackTree() : root(nullptr) {}
     // Time complexity: O(log N) in the average case, O(N) in the worst case (due to rotations)
     void Insert(int key);
     // Time complexity: O(N) where N is the number of nodes in the tree
     void printTree() const;
+    // Time complexity: O(1)
+    void leftRotate();
+    // Time complexity: O(1)
+    void rightRotate();
 };
-
 void RedBlackTree::leftRotate(Node* x) {
+    // Left rotation operation
     Node* y = x->right;
     x->right = y->left;
     if (y->left != nullptr) {
@@ -71,7 +68,6 @@ void RedBlackTree::rightRotate(Node* y) {
 }
 
 void RedBlackTree::fixInsert(Node* z) {
-    // Fix the tree after insertion
     while (z != root && z->parent->color == RED) {
         if (z->parent == z->parent->parent->left) {
             Node* y = z->parent->parent->right;
@@ -124,7 +120,6 @@ void RedBlackTree::Insert(int key) {
             x = x->right;
         }
     }
-
     z->parent = y;
     if (y == nullptr) {
         root = z;
@@ -137,32 +132,33 @@ void RedBlackTree::Insert(int key) {
     fixInsert(z);
 }
 
-void RedBlackTree::printTree(Node* root, int space) const {
-    const int COUNT = 5;
-
-    if (root == nullptr) {
-        return;
+void RedBlackTree::reverseInorderPrint(Node* root) const {
+    if (root != nullptr) {
+        reverseInorderPrint(root->right);
+        std::cout << root->data << "(" << (root->color == RED ? "R" : "B") << ") ";
+        reverseInorderPrint(root->left);
     }
-
-    space += COUNT;
-
-    printTree(root->right, space);
-
-    std::cout << std::endl;
-    for (int i = COUNT; i < space; i++) {
-        std::cout << " ";
-    }
-    std::cout << root->data << "(" << (root->color == RED ? "R" : "B") << ")" << std::endl;
-
-    printTree(root->left, space);
 }
-
 void RedBlackTree::printTree() const {
     // Time complexity: O(N) where N is the number of nodes in the tree
-    printTree(root, 0);
+    reverseInorderPrint(root);
+    std::cout << std::endl;
+}
+void RedBlackTree::leftRotate() {
+    // Time complexity: O(1)
+    if (root != nullptr && root->right != nullptr) {
+        leftRotate(root);
+    }
 }
 
-int task_1() {
+void RedBlackTree::rightRotate() {
+    // Time complexity: O(1)
+    if (root != nullptr && root->left != nullptr) {
+        rightRotate(root);
+    }
+}
+
+int tak_4 () {
     int N;
     std::cout << "Enter the number of nodes (N): ";
     std::cin >> N;
@@ -176,7 +172,7 @@ int task_1() {
         rbt.Insert(value);
     }
 
-    std::cout << "Red-Black Tree:" << std::endl;
+    std::cout << "Red-Black Tree (Reversed):" << std::endl;
     rbt.printTree();
 
     return 0;

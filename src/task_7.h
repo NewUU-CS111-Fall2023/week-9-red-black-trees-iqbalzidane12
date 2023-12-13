@@ -1,12 +1,6 @@
-/*
- * Author:
- * Date:
- * Name: Muxtorov Abdulaziz
- */ 
 #include <iostream>
-
+#include <queue>
 enum Color { RED, BLACK };
-
 class RedBlackTree {
 private:
     class Node {
@@ -22,16 +16,19 @@ private:
 
     Node* root;
     void leftRotate(Node* x);
-    void rightRotate(Node* x);
-    void fixInsert(Node* x);
-    void printTree(Node* root, int space) const;
+    void rightRotate(Node* y);
+    void fixInsert(Node* z);
+    Node* searchNode(int key) const;
+    int getHeight(Node* node) const;
 
 public:
     RedBlackTree() : root(nullptr) {}
     // Time complexity: O(log N) in the average case, O(N) in the worst case (due to rotations)
-    void Insert(int key);
+    void insert(int key);
+    // Time complexity: O(log N) in the average case, O(N) in the worst case (due to rotations)
+    void search(int key) const;
     // Time complexity: O(N) where N is the number of nodes in the tree
-    void printTree() const;
+    void display() const;
 };
 
 void RedBlackTree::leftRotate(Node* x) {
@@ -70,8 +67,7 @@ void RedBlackTree::rightRotate(Node* y) {
     y->parent = x;
 }
 
-void RedBlackTree::fixInsert(Node* z) {
-    // Fix the tree after insertion
+void RedBlackTree::fixInsert(Node* z){
     while (z != root && z->parent->color == RED) {
         if (z->parent == z->parent->parent->left) {
             Node* y = z->parent->parent->right;
@@ -110,7 +106,7 @@ void RedBlackTree::fixInsert(Node* z) {
     root->color = BLACK;
 }
 
-void RedBlackTree::Insert(int key) {
+void RedBlackTree::insert(int key) {
     // Time complexity: O(log N) in the average case, O(N) in the worst case (due to rotations)
     Node* z = new Node(key);
     Node* y = nullptr;
@@ -137,47 +133,80 @@ void RedBlackTree::Insert(int key) {
     fixInsert(z);
 }
 
-void RedBlackTree::printTree(Node* root, int space) const {
-    const int COUNT = 5;
-
-    if (root == nullptr) {
-        return;
+Node* RedBlackTree::searchNode(int key) const {
+    // Time complexity: O(log N) in the average case, O(N) in the worst case (due to rotations)
+    Node* current = root;
+    while (current != nullptr && current->data != key) {
+        if (key < current->data) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
     }
+    return current;
+}
 
-    space += COUNT;
+int RedBlackTree::getHeight(Node* node) const {
+    // Time complexity: O(log N) in the average case, O(N) in the worst case (due to rotations)
+    if (node == nullptr) {
+        return 0;
+    }
+    int leftHeight = getHeight(node->left);
+    int rightHeight = getHeight(node->right);
+    return 1 + std::max(leftHeight, rightHeight);
+}
 
-    printTree(root->right, space);
+void RedBlackTree::search(int key) const {
+    Node* result = searchNode(key);
+    if (result != nullptr) {
+        int height = getHeight(result);
+        std::cout << key << " is found, its height is " << height << std::endl;
+    } else {
+        std::cout << key << " is not found" << std::endl;
+    }
+}
+
+void RedBlackTree::display() const {
+    // Time complexity: O(N) where N is the number of nodes in the tree
+    std::queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        Node* current = q.front();
+        q.pop();
+
+        std::cout << current->data << "(" << (current->color == RED ? "R" : "B") << ") ";
+
+        if (current->left != nullptr) {
+            q.push(current->left);
+        }
+        if (current->right != nullptr) {
+            q.push(current->right);
+        }
+    }
 
     std::cout << std::endl;
-    for (int i = COUNT; i < space; i++) {
-        std::cout << " ";
-    }
-    std::cout << root->data << "(" << (root->color == RED ? "R" : "B") << ")" << std::endl;
-
-    printTree(root->left, space);
 }
 
-void RedBlackTree::printTree() const {
-    // Time complexity: O(N) where N is the number of nodes in the tree
-    printTree(root, 0);
-}
-
-int task_1() {
+int task_7 () {
     int N;
     std::cout << "Enter the number of nodes (N): ";
     std::cin >> N;
 
     RedBlackTree rbt;
 
-    std::cout << "Enter the values of the nodes: ";
+    std::cout << "Enter the values of nodes: ";
     for (int i = 0; i < N; ++i) {
         int value;
         std::cin >> value;
-        rbt.Insert(value);
+        rbt.insert(value);
     }
 
-    std::cout << "Red-Black Tree:" << std::endl;
-    rbt.printTree();
+    std::cout << "Enter the search value: ";
+    int searchValue;
+    std::cin >> searchValue;
+
+    rbt.search(searchValue);
 
     return 0;
 }
